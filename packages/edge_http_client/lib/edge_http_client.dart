@@ -1,7 +1,7 @@
 library edge_http_client;
 
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
 
 // todo: this should come from edge_io
 import 'package:edge_runtime/edge_runtime.dart' show HttpClient;
@@ -138,12 +138,11 @@ class EdgeHttpClient implements http.Client {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final req = await _ioClient.openUrl(request.method, request.url);
+    final body = request.finalize();
 
     for (final entry in request.headers.entries) {
       req.headers.add(entry.key, entry.value);
     }
-
-    final body = request.finalize();
 
     if (_allowedBodyMethods.contains(request.method)) {
       final bytes = await body.toBytes();
